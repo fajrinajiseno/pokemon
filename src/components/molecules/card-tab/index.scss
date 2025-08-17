@@ -1,0 +1,36 @@
+$name: '.pokemon-card-tab';
+#{$name} {
+  background: white;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  margin-top: -35px;
+  padding-top: 20px;
+  #{$name}__navigation-item {
+    color: darkgrey;
+    cursor: pointer;
+    padding-bottom: 10px;
+
+    &.active {
+      color: black;
+      border-bottom: 1px solid blue;
+    }
+  }
+  @keyframes fadeIn {
+    from {
+      height: 0;
+      visibility: hidden;
+      opacity: 0;
+    }
+    to {
+      height: 100%;
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+
+  #{$name}__content {
+    animation: fadeIn 1s ease forwards;
+    visibility: visible;
+    padding: 16px 20px;
+  }
+}

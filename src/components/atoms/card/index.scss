@@ -1,0 +1,26 @@
+$name: '.pokemon-card';
+#{$name} {
+  border-radius: 10px;
+  height: 128px;
+  cursor: pointer;
+  #{$name}__order {
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    color: rgba(255, 255, 255, 0.8);
+  }
+  #{$name}__skill {
+    border: 1px solid;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 5px;
+    font-size: 12px;
+    color: white;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 50px;
+  }
+  #{$name}__image {
+    right: 10px;
+    bottom: 10px;
+  }
+}

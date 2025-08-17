@@ -1,0 +1,70 @@
+$name: '.pokemon-card-detail';
+#{$name} {
+  position: fixed;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  overflow-y: auto;
+  #{$name}__container {
+    width: 480px;
+    position: relative;
+  }
+  #{$name}__order {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  #{$name}__skill {
+    border: 1px solid;
+    border-radius: 10px;
+    text-align: center;
+    margin-right: 10px;
+    font-size: 18px;
+    color: white;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 50px;
+    padding: 4px 16px;
+  }
+  #{$name}__close {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  @keyframes slideUp {
+    0% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  @keyframes slideDown {
+    0% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+  }
+  &#{$name}--use-animation {
+    // opacity: 0;
+    // transform: translateY(100%);
+    // transition: transform 0.6s ease;
+    animation: slideUp 0.5s ease-out forwards;
+
+    // &.show {
+    //   opacity: 1;
+    //   transform: translateY(0);
+    // }
+    &.slidedown {
+      animation: slideDown 0.5s ease-out forwards;
+    }
+  }
+}
