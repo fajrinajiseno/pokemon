@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest test",
-    "deploy": "next build && touch out/.nojekyll && gh-pages -d out -t true"
+    "deploy": "next build && touch out/.nojekyll && gh-pages -d out -t"
   },
   "dependencies": {
     "next": "15.4.6",
