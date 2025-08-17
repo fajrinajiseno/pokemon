@@ -35,7 +35,7 @@ export default function CardTab({ pokemon }: CardTabProps) {
     },
     {
       label: 'Abilities',
-      value: pokemon.abilities.map((ability) => ability.ability.name)
+      value: pokemon.abilities.map((ability) => ability.ability.name).join(' ')
     }
   ]
 
