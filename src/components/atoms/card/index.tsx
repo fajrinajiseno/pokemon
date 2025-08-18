@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { backgroundColor, pokemonColor } from '@/types/pokemon'
+import { backgroundColor } from '@/types/pokemon'
 import type { Pokemon } from '@/types/pokemon'
 import './index.scss'
 
@@ -23,8 +23,8 @@ export default function Card({ pokemon, handleClick }: CardProps) {
       className="pokemon-card flex justify-between p-4 relative"
       style={{
         backgroundColor:
-          pokemonColor[pokemon.name as keyof typeof pokemonColor] ||
-          backgroundColor.green
+          backgroundColor[pokemon.color as keyof typeof backgroundColor] ||
+          backgroundColor.white
       }}
       onClick={handleCardClicked}
       data-testid={`pokemon-card-${pokemon.name}`}

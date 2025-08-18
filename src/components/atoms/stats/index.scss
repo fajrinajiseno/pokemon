@@ -1,0 +1,11 @@
+$name: '.pokemon-stats';
+#{$name} {
+  border-radius: 10px;
+  height: 10px;
+  background-color: #f7f7f6;
+  position: relative;
+  & > div {
+    border-radius: 10px;
+    height: 10px;
+  }
+}

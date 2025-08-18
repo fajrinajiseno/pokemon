@@ -2,6 +2,12 @@ type PokemonSpecies = {
   name: string
   url: string
 }
+export type PokemonPagination = {
+  count: number
+  next?: string
+  orevious?: string
+  result: PokemonSpecies[]
+}
 export type Pokemon = {
   id: number
   name: string
@@ -43,7 +49,11 @@ export type Pokemon = {
       url: string
     }
   }[]
-  evolution?: PokemonEvolutionList
+  evolution?: PokemonEvolutionList[]
+  evolution_chain?: {
+    url: string
+  }
+  color: string
 }
 
 export type PokemonList = {
@@ -55,6 +65,18 @@ export type PokemonSpeciesResponse = {
   evolution_chain: {
     url: string
   }
+  color: {
+    name: string
+  }
+  varieties: [
+    {
+      pokemon: {
+        name: string
+        url: string
+      }
+    }
+  ]
+  name: string
   id: number
 }
 
@@ -62,40 +84,32 @@ export type PokemonEvolution = {
   evolves_to: PokemonEvolution[]
   species: PokemonSpecies
 }
-export type PokemonEvolutionList = {
+export type PokemonEvolutionResponse = {
   id: number
   pokemonId: number
   chain: PokemonEvolution
 }
 
+export type PokemonEvolutionList = {
+  name: string
+  pokemon: Pokemon
+}
+
+export enum backgroundStatColor {
+  low = '#ff5f56',
+  medium = '#ffbd2d',
+  good = '#26c940'
+}
+
 export enum backgroundColor {
   green = '#64dbb2',
-  orange = '#f0776a',
+  red = '#fb6c6d',
   blue = '#58abf6',
   yellow = '#facd4b',
   purple = '#9f5bba',
-  coco = '#ca8179'
-}
-
-export enum pokemonColor {
-  bulbasaur = backgroundColor.green,
-  ivysaur = backgroundColor.green,
-  venusaur = backgroundColor.green,
-  charmander = backgroundColor.orange,
-  charmeleon = backgroundColor.orange,
-  charizard = backgroundColor.orange,
-  squirtle = backgroundColor.blue,
-  wartortle = backgroundColor.blue,
-  blastoise = backgroundColor.blue,
-  caterpie = backgroundColor.green,
-  metapod = backgroundColor.green,
-  butterfree = backgroundColor.purple,
-  weedle = backgroundColor.yellow,
-  kakuna = backgroundColor.yellow,
-  beedrill = backgroundColor.yellow,
-  pidgey = backgroundColor.coco,
-  pidgeotto = backgroundColor.coco,
-  pidgeot = backgroundColor.coco,
-  rattata = backgroundColor.purple,
-  raticate = backgroundColor.yellow
+  brown = '#ca8179',
+  pink = '#ffc5b4',
+  black = '#0c0c0c',
+  gray = '#848484',
+  white = '#b3bbd0'
 }

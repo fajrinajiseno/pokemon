@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
-import { backgroundColor, pokemonColor } from '@/types/pokemon'
+import { backgroundColor } from '@/types/pokemon'
 import type { Pokemon } from '@/types/pokemon'
 import CardTab from '@/components/molecules/card-tab'
 import './index.scss'
@@ -23,7 +23,7 @@ export default function Card({
   const closeClicked = useRef(true)
   const initialized = useRef(true)
   function capitalizeFirst(str: string) {
-    return str ? str.charAt(0).toUpperCase() + str.slice(1) : ''
+    return str.charAt(0).toUpperCase() + str.slice(1)
   }
 
   function handleCloseClicked() {
@@ -78,11 +78,14 @@ export default function Card({
         <div
           style={{
             backgroundColor:
-              pokemonColor[pokemon.name as keyof typeof pokemonColor] ||
-              backgroundColor.green
+              backgroundColor[pokemon.color as keyof typeof backgroundColor] ||
+              backgroundColor.white
           }}
         >
-          <div className="flex justify-between items-center px-5 py-4">
+          <div
+            className="flex justify-between items-center px-5 py-4 fade-in"
+            key={`pokemon-upper-detail-${pokemon.name}`}
+          >
             <div>
               <h3 className="text-[40px] font-bold mb-1 text-white">
                 {capitalizeFirst(pokemon.name)}
@@ -103,7 +106,10 @@ export default function Card({
               </div>
             </div>
           </div>
-          <div className="flex items-center justify-center">
+          <div
+            className="flex items-center justify-center fade-in"
+            key={`pokemon-image-detail-${pokemon.name}`}
+          >
             <Image
               className="pokemon-card-detail__image"
               src={pokemon.sprites.other['official-artwork'].front_default}

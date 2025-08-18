@@ -1,4 +1,5 @@
-import { waitFor, renderHook } from '@testing-library/react'
+import { waitFor, renderHook, act } from '@testing-library/react'
+import { Pokemon } from '@/types/pokemon'
 import usePokemon from '@/hooks/usePokemon'
 import getPokemon from '../__mocks__/getPokemon.json'
 import getPokemonById from '../__mocks__/getPokemonById.json'
@@ -11,12 +12,14 @@ describe('usePokemon', () => {
   it('should return the initial values', async () => {
     const { result } = renderHook(() => usePokemon())
 
-    expect(result.current.pokemon).toBe(undefined)
+    expect(result.current.pokemon.length).toBe(0)
+    expect(result.current.activePokemon).toBe(undefined)
+    expect(result.current.pokemonPagination).toBe(undefined)
     expect(result.current.isFetching).toBe(true)
     expect(result.current.error).toBe(undefined)
 
     await waitFor(() => {
-      expect(result.current.isFetching).toBe(false)
+      expect(result.current.isFetching).toBe(true)
       expect(result.current.error?.message).toBe(
         "Cannot read properties of undefined (reading 'json')"
       )
@@ -37,9 +40,9 @@ describe('usePokemon', () => {
           .mockResolvedValueOnce({
             json: jest.fn().mockResolvedValue(getPokemonSpecies)
           })
-          .mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValue(getPokemonEvolution)
-          })
+        // .mockResolvedValueOnce({
+        //   json: jest.fn().mockResolvedValue(getPokemonEvolution)
+        // })
       })
 
       it('should return successfully', async () => {
@@ -48,13 +51,19 @@ describe('usePokemon', () => {
         const pokemonData = [
           {
             ...getPokemonById,
-            evolution: { ...getPokemonEvolution, pokemonId: getPokemonById.id }
+            evolution_chain: getPokemonSpecies.evolution_chain,
+            color: getPokemonSpecies.color.name
           }
         ]
 
         await waitFor(() =>
           expect(result.current).toEqual({
             pokemon: pokemonData,
+            activePokemon: undefined,
+            pokemonPagination: getPokemon,
+            fetchPokemon: expect.any(Function),
+            getPokemonDetail: expect.any(Function),
+            setActivePokemon: expect.any(Function),
             isFetching: false,
             error: undefined
           })
@@ -80,98 +89,155 @@ describe('usePokemon', () => {
     })
   })
 
-  // describe('createTask', () => {
-  //   let mockedData
-  //   beforeEach(() => {
-  //     mockedData = [
-  //       {
-  //         id: 1,
-  //         title: 'Finish an interview'
-  //       }
-  //     ]
+  describe('getPokemonDetail', () => {
+    describe('success', () => {
+      beforeEach(() => {
+        global.fetch = jest
+          .fn()
+          .mockResolvedValueOnce({
+            json: jest.fn().mockResolvedValue(getPokemon)
+          })
+          .mockResolvedValueOnce({
+            json: jest.fn().mockResolvedValue(getPokemonById)
+          })
+          .mockResolvedValueOnce({
+            json: jest.fn().mockResolvedValue(getPokemonSpecies)
+          })
+          .mockResolvedValueOnce({
+            json: jest.fn().mockResolvedValue(getPokemonSpecies)
+          })
+          .mockResolvedValueOnce({
+            json: jest.fn().mockResolvedValue(getPokemonEvolution)
+          })
+      })
 
-  //     global.fetch.mockResolvedValueOnce({
-  //       json: jest.fn().mockResolvedValueOnce(mockedData)
-  //     })
-  //   })
+      it('should return successfully', async () => {
+        const { result } = renderHook(() => usePokemon())
 
-  //   describe('success', () => {
-  //     it('should return successfully', async () => {
-  //       const { result } = renderHook(() => useTask())
+        const pokemonData = [
+          {
+            ...getPokemonById,
+            evolution_chain: getPokemonSpecies.evolution_chain,
+            color: getPokemonSpecies.color.name
+          }
+        ]
 
-  //       await waitFor(() =>
-  //         expect(result.current).toEqual({
-  //           tasks: mockedData,
-  //           isFetching: false,
-  //           error: null,
-  //           createTask: expect.any(Function),
-  //           deleteTask: expect.any(Function)
-  //         })
-  //       )
+        const pokemonDetailData = {
+          ...getPokemonById,
+          evolution: [{ name: getPokemonById.name, pokemon: getPokemonById }]
+        }
 
-  //       const createdMockedData = {
-  //         id: 2,
-  //         title: 'Study React'
-  //       }
-  //       global.fetch.mockResolvedValueOnce({
-  //         json: jest.fn().mockResolvedValueOnce(createdMockedData)
-  //       })
+        await waitFor(() =>
+          expect(result.current).toEqual({
+            pokemon: pokemonData,
+            activePokemon: undefined,
+            pokemonPagination: getPokemon,
+            fetchPokemon: expect.any(Function),
+            getPokemonDetail: expect.any(Function),
+            setActivePokemon: expect.any(Function),
+            isFetching: false,
+            error: undefined
+          })
+        )
 
-  //       act(() => {
-  //         result.current.createTask('Study React')
-  //       })
+        act(() => {
+          result.current.getPokemonDetail(
+            pokemonDetailData as unknown as Pokemon
+          )
+        })
 
-  //       expect(result.current.error).toBe(null)
+        await waitFor(() => {
+          expect(result.current.activePokemon).toEqual({
+            ...getPokemonById,
+            evolution_chain: getPokemonSpecies.evolution_chain,
+            color: getPokemonSpecies.color.name,
+            evolution: [
+              {
+                name: getPokemonById.name,
+                pokemon: {
+                  ...getPokemonById,
+                  evolution_chain: getPokemonSpecies.evolution_chain,
+                  color: getPokemonSpecies.color.name
+                }
+              },
+              {
+                name: 'ivysaur',
+                pokemon: undefined
+              },
+              {
+                name: 'venusaur',
+                pokemon: undefined
+              }
+            ]
+          })
+          expect(result.current.isFetching).toEqual(false)
+        })
+      })
+    })
 
-  //       await waitFor(() =>
-  //         expect(result.current).toEqual({
-  //           tasks: [...mockedData, createdMockedData],
-  //           isFetching: false,
-  //           error: null,
-  //           createTask: expect.any(Function),
-  //           deleteTask: expect.any(Function)
-  //         })
-  //       )
-  //     })
-  //   })
+    describe('error', () => {
+      const errorMessage = 'creat error'
+      const mockedError = new Error(errorMessage)
 
-  //   describe('error', () => {
-  //     const errorMessage = 'creat error'
-  //     const mockedError = new Error(errorMessage)
+      beforeEach(() => {
+        global.fetch = jest
+          .fn()
+          .mockResolvedValueOnce({
+            json: jest.fn().mockResolvedValue(getPokemon)
+          })
+          .mockResolvedValueOnce({
+            json: jest.fn().mockResolvedValue(getPokemonById)
+          })
+          .mockResolvedValueOnce({
+            json: jest.fn().mockResolvedValue(getPokemonSpecies)
+          })
+          .mockResolvedValueOnce({
+            json: jest.fn().mockResolvedValue(getPokemonSpecies)
+          })
+          .mockRejectedValueOnce(mockedError)
+      })
 
-  //     it('should return error', async () => {
-  //       const { result } = renderHook(() => useTask())
+      it('should return error', async () => {
+        const { result } = renderHook(() => usePokemon())
 
-  //       await waitFor(() =>
-  //         expect(result.current).toEqual({
-  //           tasks: mockedData,
-  //           isFetching: false,
-  //           error: null,
-  //           createTask: expect.any(Function),
-  //           deleteTask: expect.any(Function)
-  //         })
-  //       )
+        const pokemonData = [
+          {
+            ...getPokemonById,
+            evolution_chain: getPokemonSpecies.evolution_chain,
+            color: getPokemonSpecies.color.name
+          }
+        ]
 
-  //       global.fetch.mockRejectedValue(mockedError)
+        const pokemonDetailData = {
+          ...getPokemonById,
+          evolution: [{ name: getPokemonById.name, pokemon: getPokemonById }]
+        }
 
-  //       act(() => {
-  //         result.current.createTask('Study React')
-  //       })
+        await waitFor(() =>
+          expect(result.current).toEqual({
+            pokemon: pokemonData,
+            activePokemon: undefined,
+            pokemonPagination: getPokemon,
+            fetchPokemon: expect.any(Function),
+            getPokemonDetail: expect.any(Function),
+            setActivePokemon: expect.any(Function),
+            isFetching: false,
+            error: undefined
+          })
+        )
 
-  //       expect(result.current.error).toBe(null)
+        act(() => {
+          result.current.getPokemonDetail(
+            pokemonDetailData as unknown as Pokemon
+          )
+        })
 
-  //       await waitFor(() =>
-  //         expect(result.current).toEqual({
-  //           tasks: mockedData,
-  //           isFetching: false,
-  //           error: errorMessage,
-  //           createTask: expect.any(Function),
-  //           deleteTask: expect.any(Function)
-  //         })
-  //       )
-  //     })
-  //   })
-  // })
+        await waitFor(() =>
+          expect(result.current.activePokemon).toEqual(undefined)
+        )
+      })
+    })
+  })
 
   // describe('deleteTask', () => {
   //   let mockedData
