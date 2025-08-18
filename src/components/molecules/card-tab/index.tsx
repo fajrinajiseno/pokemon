@@ -25,6 +25,10 @@ export default function CardTab({ pokemon }: CardTabProps) {
 
   function onEvolutionClick(pokemonItem: Pokemon) {
     handleEvolutionClick(pokemonItem)
+    document.querySelector('.pokemon-card-detail')?.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
   }
 
   const AboutData = [
